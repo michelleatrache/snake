@@ -150,7 +150,14 @@
 			const RIGHT = 39;
 			const DOWN = 40;
 
+			const ESCAPE = 27;
+
 			const key = event.keyCode;
+
+			if(key == ESCAPE){
+				reset();
+				return;
+			}
 
 			// determine which direction snake is currently going
 			const isGoingUp = dy === -10;
