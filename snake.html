@@ -85,13 +85,29 @@
 				{x: mid-(interval*3), y: mid},
 				{x: mid-(interval *4), y: mid},
 			];
+			// initially, have snake move to the right horizontally
+			dx = 10; // horizontal velocity
+			dy = 0; // vertical velocity 
+
+			foodX = getRandomNum(0, width);
+			foodY = getRandomNum(0, height);
 		}
 
 
+		// check if head hit the edge of the canvas
 		function checkBoundaryHit(head){
 			return (head.x == 0 || head.x == width || head.y == 0 || head.y == height);
 		}
 
+		function checkSelfHit(head){
+			console.log(head.x);
+			for(var i = 1; i < snake.length; i++){
+				if(head.x == snake[i].x && head.y == snake[i].y){
+					return true;
+				}
+			}
+			return false;
+		}
 
 		// moves the snake to the right (x)
 		function advanceSnake() {
@@ -102,9 +118,14 @@
 
 			// check if head hit canvas boundaries
 			var hitBoundary = checkBoundaryHit(newHead);
+			var hitSelf = checkSelfHit(newHead);
 
 			if(hitBoundary){
 				console.log("hit boundary... restarting game");
+				reset();
+			}
+			else if(hitSelf){
+				console.log("hit self... restarting game");
 				reset();
 			}
 			else{
@@ -164,7 +185,7 @@
 		    max = Math.floor(max);
 		    var num = Math.random() * (max - min + 1) + min;
 			num = (Math.ceil(num/10)) * 10;
-		    console.log(num);
+		   // console.log(num);
 		    return num;
 		}
 
