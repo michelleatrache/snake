@@ -3,8 +3,8 @@
 	<head>
 		<title>Snake Game</title>
 	</head>
-
-	<canvas id="gCanvas" width="500" height="500"></canvas>
+	<div id="score">0</div>
+	<canvas id="gCanvas" width="300" height="300"></canvas>
 
 	<script>
 
@@ -46,6 +46,8 @@
 
 		let foodX = getRandomNum(0, width);
 		let foodY = getRandomNum(0, height);
+
+		let score = 0;
 
 		main();
 
@@ -91,6 +93,9 @@
 
 			foodX = getRandomNum(0, width);
 			foodY = getRandomNum(0, height);
+
+			score = 0;
+			updateScoreDisplay();
 		}
 
 
@@ -100,13 +105,16 @@
 		}
 
 		function checkSelfHit(head){
-			console.log(head.x);
 			for(var i = 1; i < snake.length; i++){
 				if(head.x == snake[i].x && head.y == snake[i].y){
 					return true;
 				}
 			}
 			return false;
+		}
+
+		function updateScoreDisplay(){
+			document.getElementById('score').innerHTML = score;
 		}
 
 		// moves the snake to the right (x)
@@ -134,6 +142,8 @@
 					// skip popping off the last coord in snake array 
 					// create more food to continue
 					createFood();
+					score++;
+					updateScoreDisplay();
 				}
 				else{
 					// remove the last coordinate in snake array
@@ -197,8 +207,8 @@
 		}
 
 		function createFood(){
-			foodX = getRandomNum(0, width);
-			foodY = getRandomNum(0, height);
+			foodX = getRandomNum(0, width-10);
+			foodY = getRandomNum(0, height-10);
 
 			// need to make sure {foodX, foodY} isn't positioned where the snake currently is
 			// check this:
