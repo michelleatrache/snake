@@ -40,6 +40,7 @@
 			{x: mid-(interval *4), y: mid},
 		];
 
+		// initially, have snake move to the right horizontally
 		let dx = 10; // horizontal velocity
 		let dy = 0; // vertical velocity 
 
@@ -76,6 +77,22 @@
 			}
 		}
 
+		function reset(){
+			snake = [
+				{x: mid, y: mid},
+				{x: mid-(interval), y: mid},
+				{x: mid-(interval*2), y: mid},
+				{x: mid-(interval*3), y: mid},
+				{x: mid-(interval *4), y: mid},
+			];
+		}
+
+
+		function checkBoundaryHit(head){
+			return (head.x == 0 || head.x == width || head.y == 0 || head.y == height);
+		}
+
+
 		// moves the snake to the right (x)
 		function advanceSnake() {
 			const newHead = {x: snake[0].x + dx, y: snake[0].y + dy};
@@ -83,15 +100,24 @@
 			// add newHead to top of snake array
 			snake.unshift(newHead);
 
-			// check if snake ate food (if head of snake == {foodX, foodY})
-			if(snake[0].x == foodX && snake[0].y == foodY){
-				// skip popping off the last coord in snake array 
-				// create more food to continue
-				createFood();
+			// check if head hit canvas boundaries
+			var hitBoundary = checkBoundaryHit(newHead);
+
+			if(hitBoundary){
+				console.log("hit boundary... restarting game");
+				reset();
 			}
 			else{
-				// remove the last coordinate in snake array
-				snake.pop();
+				// check if snake ate food (if head of snake == {foodX, foodY})
+				if(snake[0].x == foodX && snake[0].y == foodY){
+					// skip popping off the last coord in snake array 
+					// create more food to continue
+					createFood();
+				}
+				else{
+					// remove the last coordinate in snake array
+					snake.pop();
+				}
 			}
 
 		}
