@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Snake Game</title>
+	</head>
+
+	<canvas id="gCanvas" width="500" height="500"></canvas>
+
+	<script>
+
+		var gCanvas = document.getElementById("gCanvas");
+
+		var ctx = gCanvas.getContext("2d");
+
+		const canvasFillColor = 'white';
+		const canvasStrokeColor = 'black';
+
+		ctx.fillStyle='canvasFillColor';
+		ctx.strokeStyle='canvasStrokeColor';
+
+		const width = gCanvas.width;
+		const height = gCanvas.height;
+
+		// fill backgroung of the canvas
+		ctx.fillRect(0, 0, width, height);
+
+		// fill out border of canvas
+		ctx.strokeRect(0, 0, width, height);
+
+		// get mid point to draw initial snake position
+		const mid = width/2; // which is also height/2
+		const interval = 10;
+
+		// rep the snake as array of coords in middle of the canvas
+		let snake = [
+			{x: mid, y: mid},
+			{x: mid-(interval), y: mid},
+			{x: mid-(interval*2), y: mid},
+			{x: mid-(interval*3), y: mid},
+			{x: mid-(interval *4), y: mid},
+		];
+
+		let dx = 10; // horizontal velocity
+		let dy = 0; // vertical velocity 
+
+		let foodX = getRandomNum(0, width);
+		let foodY = getRandomNum(0, height);
+
+		main();
+
+		document.addEventListener("keydown", switchDirection);
+
+		// draws the snake
+		function drawSnakeCoord(snakeCoord){
+			ctx.fillStyle='lightblue';
+			ctx.strokeStyle='darkblue';
+
+			ctx.fillRect(snakeCoord.x, snakeCoord.y, 10, 10);
+			ctx.strokeRect(snakeCoord.x, snakeCoord.y, 10, 10);
+		}
+
+		function clearCanvas() { 
+			ctx.fillStyle=canvasFillColor;
+			ctx.strokeStyle=canvasStrokeColor;
+
+			ctx.fillRect(0, 0, width, height);
+			ctx.strokeRect(0, 0, width, height);
+		}
+
+		function drawSnake() {
+			//snake.forEach(drawSnakeCoord);
+			var len = snake.length;
+			for(var i = 0; i<len; i++){
+			//	console.log(snake[i]);
+				drawSnakeCoord(snake[i]);
+			}
+		}
+
+		// moves the snake to the right (x)
+		function advanceSnake() {
+			const newHead = {x: snake[0].x + dx, y: snake[0].y + dy};
+
+			// add newHead to top of snake array
+			snake.unshift(newHead);
+
+			// check if snake ate food (if head of snake == {foodX, foodY})
+			if(snake[0].x == foodX && snake[0].y == foodY){
+				// skip popping off the last coord in snake array 
+				// create more food to continue
+				createFood();
+			}
+			else{
+				// remove the last coordinate in snake array
+				snake.pop();
+			}
+
+		}
+
+		function switchDirection(event){
+			// set key codes
+			const LEFT = 37;
+			const UP = 38;
+			const RIGHT = 39;
+			const DOWN = 40;
+
+			const key = event.keyCode;
+
+			// determine which direction snake is currently going
+			const isGoingUp = dy === -10;
+			const isGoingDown = dy === 10;
+			const isGoingRight = dx === 10;
+			const isGoingLeft = dx === -10;
+
+			if (key === LEFT && !isGoingRight){
+				dx = - 10;
+				dy = 0;
+			}
+
+			if (key === RIGHT && !isGoingLeft){
+				dx = 10;
+				dy = 0;
+			}
+
+			if (key === UP && !isGoingDown){
+				dx = 0;
+				dy = -10;
+			}
+
+			if (key === DOWN && !isGoingUp){
+				dx = 0;
+				dy = 10;
+			}
+		}
+
+		// get random number divisible by 10 to randomly generate snake food
+		function getRandomNum(min, max) {
+		    min = Math.ceil(min);
+		    max = Math.floor(max);
+		    var num = Math.random() * (max - min + 1) + min;
+			num = (Math.ceil(num/10)) * 10;
+		    console.log(num);
+		    return num;
+		}
+
+		function createFood(){
+			foodX = getRandomNum(0, width);
+			foodY = getRandomNum(0, height);
+
+			// need to make sure {foodX, foodY} isn't positioned where the snake currently is
+			// check this:
+			for(var i = 0; i<snake.length; i++){
+				if(foodX == snake[i].x && foodY == snake[i].y){
+					// if on snake, create new food coords
+					createFood();
+				}
+			}
+		}
+
+		// draw food 
+		function drawFood(){
+			ctx.fillStyle='lightgreen';
+			ctx.strokeStyle='green';
+
+			ctx.fillRect(foodX, foodY, 10, 10);
+			ctx.strokeRect(foodX, foodY, 10, 10);			
+		}
+
+
+		function main() {
+			setTimeout(function onStep() {
+				clearCanvas();
+				drawFood();
+				advanceSnake();
+				drawSnake();
+
+				// recurse to move snake automatically with timeout to show it's moving periodically
+				main();
+			}, 100)
+		}
+
+
+
+	</script>
+
+</html>
